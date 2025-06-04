@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Header from '../Header';
 
 export default function QuestionnaireForm({ id }) {
     const [questionnaire, setQuestionnaire] = useState(null);
@@ -32,7 +33,6 @@ export default function QuestionnaireForm({ id }) {
 
         switch (type) {
             case 'SIMPLE_TEXT':
-            case 'FREE_TEXT':
                 return (
                     <input
                         type="text"
@@ -41,6 +41,15 @@ export default function QuestionnaireForm({ id }) {
                         onChange={e => handleChange(input_key, e.target.value)}
                     />
                 );
+            case 'FREE_TEXT':
+                return (
+                    <textarea
+                        placeholder={label}
+                        value={formData[input_key] || ''}
+                        onChange={e => handleChange(input_key, e.target.value)}
+                    />
+                );
+
             case 'DATE_TIME':
                 return (
                     <input
@@ -65,25 +74,36 @@ export default function QuestionnaireForm({ id }) {
     if (!questionnaire) return <p>Loading...</p>;
 
     return (
-        <div>
-            <h2>{questionnaire.name}</h2>
-            <p>{questionnaire.description}</p>
+        <>
+            <Header>
+                <div>
+                    <h2>{questionnaire.name}</h2>
+                    <p>{questionnaire.description}</p>
 
-            <form onSubmit={handleSubmit}>
-                {questionnaire.questions.map((question) => (
-                    <div key={question.id} style={{ marginBottom: '1.5rem' }}>
-                        <p><strong>{question.content.replace(/<\/?[^>]+(>|$)/g, '')}</strong></p>
-                        {question.settings?.responses?.map((response, idx) => (
-                            <div key={idx} style={{ marginLeft: '1rem' }}>
-                                <label>{response.label}</label><br />
-                                {renderInput(response)}
+                    <form onSubmit={handleSubmit}>
+                        {questionnaire.questions.map((question) => (
+                            <div key={question.id} style={{ marginBottom: '1.5rem' }}>
+
+                                <p><strong>{question.content.replace(/<\/?[^>]+(>|$)/g, '')}</strong></p>
+
+                                {question.settings?.responses?.map((response, idx) => (
+
+                                    <div key={idx} style={{ marginLeft: '1rem' }}>
+                                        <label>{response.label}</label><br />
+                                        {renderInput(response)}
+                                    </div>
+
+                                ))}
                             </div>
                         ))}
-                    </div>
-                ))}
 
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+                        <button type="submit">Submit</button>
+                    </form>
+
+
+                </div>
+            </Header>
+        </>
+
     );
 }
